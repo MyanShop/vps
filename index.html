@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VPS Reselling</title>
+    <title>Interactive VPS Selector</title>
     <style>
         /* General Styling */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
         :root {
             --primary-color: #007bff;
             --secondary-color: #8c96a3;
-            --dot-color: #28a745; /* Changed to green */
-            --dot-shadow-color: rgba(40, 167, 69, 0.7); /* Green shadow for pulse */
+            --dot-color: #28a745;
+            --dot-shadow-color: rgba(40, 167, 69, 0.7);
 
             --background-color-light: #f4f7f9;
             --card-background-light: #ffffff;
@@ -40,10 +40,7 @@
             --shadow-color-hover: rgba(255, 255, 255, 0.1);
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
@@ -62,342 +59,129 @@
             position: relative;
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
+        header h1 { margin: 0; font-size: 2.5rem; font-weight: 700; }
 
         .theme-toggle-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease;
+            position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; width: 44px; height: 44px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.3s ease;
         }
-
-        .theme-toggle-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .theme-toggle-button svg {
-            width: 24px;
-            height: 24px;
-            color: white;
-        }
-        
+        .theme-toggle-button:hover { background: rgba(255, 255, 255, 0.2); }
+        .theme-toggle-button svg { width: 24px; height: 24px; color: white; }
         .theme-toggle-button .sun-icon { display: none; }
         [data-theme="dark"] .theme-toggle-button .sun-icon { display: block; }
         [data-theme="dark"] .theme-toggle-button .moon-icon { display: none; }
 
+        main { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; padding: 0 1rem; }
 
-        main {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2rem;
-            padding: 0 1rem;
-        }
-
-        /* VPS Card Styling */
         .vps-card {
             background-color: var(--card-background, var(--card-background-light));
             border: 1px solid var(--border-color, var(--border-color-light));
-            border-radius: 16px;
-            box-shadow: 0 4px 12px var(--shadow-color);
-            overflow: hidden;
-            width: 100%;
-            max-width: 360px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
+            border-radius: 16px; box-shadow: 0 4px 12px var(--shadow-color); overflow: hidden;
+            width: 100%; max-width: 360px; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex; flex-direction: column;
         }
+        .vps-card:hover { transform: translateY(-8px); box-shadow: 0 10px 20px var(--shadow-color-hover); }
 
-        .vps-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px var(--shadow-color-hover);
-        }
-
-        /* SVG Map Header */
         .vps-card-header {
-            position: relative;
-            background-color: var(--background-color, var(--background-color-light));
-            border-bottom: 1px solid var(--border-color, var(--border-color-light));
-            line-height: 0;
+            position: relative; background-color: var(--background-color, var(--background-color-light));
+            border-bottom: 1px solid var(--border-color, var(--border-color-light)); line-height: 0;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-
-        .world-map-img {
-            width: 100%;
-            height: auto;
-            display: block;
-            filter: brightness(0.95);
-        }
-        
-        [data-theme="dark"] .world-map-img {
-            filter: invert(1) hue-rotate(180deg) brightness(0.7);
-        }
+        .world-map-img { width: 100%; height: auto; display: block; filter: brightness(0.95); }
+        [data-theme="dark"] .world-map-img { filter: invert(1) hue-rotate(180deg) brightness(0.7); }
 
         .dot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: var(--dot-color);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            border: 1.5px solid white;
-            box-shadow: 0 0 0 0 var(--dot-shadow-color);
-            animation: pulse 1.8s infinite ease-in-out;
+            position: absolute; width: 10px; height: 10px; background-color: var(--dot-color);
+            border-radius: 50%; transform: translate(-50%, -50%); border: 1.5px solid white;
+            box-shadow: 0 0 0 0 var(--dot-shadow-color); animation: pulse 1.8s infinite ease-in-out;
         }
-        
         @keyframes pulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.95);
-                box-shadow: 0 0 0 0 var(--dot-shadow-color);
-            }
-            70% {
-                transform: translate(-50%, -50%) scale(1.2);
-                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(0.95);
-                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
-            }
+            0% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 var(--dot-shadow-color); }
+            70% { transform: translate(-50%, -50%) scale(1.2); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
         }
 
-        /* Card Body Content */
-        .vps-card-body {
-            padding: 1.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
+        .vps-card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; cursor: pointer; }
         .vps-card-body h2 {
-            color: var(--heading-color, var(--heading-color-light));
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: color 0.3s ease;
-        }
-        
-        .vps-card-body h2 .price {
-            font-size: 1.5rem;
-            color: var(--primary-color);
+            color: var(--heading-color, var(--heading-color-light)); margin-top: 0; margin-bottom: 0.25rem;
+            font-size: 1.5rem; font-weight: 800; transition: color 0.3s ease;
         }
 
-        .specs p, .locations p, .notes p {
-            margin-bottom: 0.75rem;
-            font-size: 0.95rem;
-        }
+        .price-section { margin-bottom: 1.5rem; }
+        .price-main { font-size: 1.75rem; font-weight: 700; color: var(--primary-color); line-height: 1.2; }
+        .price-main span { font-size: 1rem; font-weight: 500; color: var(--secondary-color); }
+        .price-usd { font-size: 0.9rem; font-weight: 500; color: var(--secondary-color); margin-top: 0.25rem; }
 
-        .specs strong, .locations strong, .notes strong {
-            color: var(--secondary-color);
-            font-weight: 500;
-        }
+        .specs p, .locations p, .notes p { margin-bottom: 0.75rem; font-size: 0.95rem; }
+        .specs strong, .locations strong, .notes strong { color: var(--text-color, var(--text-color-light)); font-weight: 500; }
 
-        .locations-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0;
-            list-style: none;
-            margin-top: 0.5rem;
+        /* ✅ NEW & MODIFIED CSS FOR INTERACTIVITY */
+        .os-options, .locations-list {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; list-style: none; margin-top: 0.5rem;
         }
-
-        .locations-list li {
+        .os-option, .locations-list li {
             background-color: var(--background-color, var(--background-color-light));
             border: 1px solid var(--border-color, var(--border-color-light));
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.85rem;
+            cursor: pointer; transition: all 0.2s ease-in-out;
         }
-
-        .notes ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 0.5rem;
+        .os-option:hover, .locations-list li:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
         }
-
-        .notes li {
-            margin-bottom: 0.5rem;
-            padding-left: 1.75rem;
-            position: relative;
-            font-size: 0.9rem;
+        .os-option.selected, .locations-list li.selected {
+            background-color: var(--primary-color); color: white; border-color: var(--primary-color);
+            font-weight: 700;
         }
+        /* ✅ END OF NEW CSS */
 
+        .notes ul { list-style: none; padding: 0; margin-top: 0.5rem; }
+        .notes li { margin-bottom: 0.5rem; padding-left: 1.75rem; position: relative; font-size: 0.9rem; }
         .notes li::before {
-            content: '✔';
-            color: var(--dot-color);
-            position: absolute;
-            left: 0;
-            font-size: 1.1rem;
+            content: '✔'; color: var(--dot-color); position: absolute; left: 0; font-size: 1.1rem;
         }
 
-        /* FAQ Section */
-        .faq {
-            border-top: 1px solid var(--border-color, var(--border-color-light));
-            margin-top: auto; /* Pushes FAQ and button to the bottom */
-            padding-top: 1rem;
-            transition: border-color 0.3s ease;
-        }
-        
-        .faq-item {
-            border-bottom: 1px solid var(--border-color, var(--border-color-light));
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s ease;
-        }
-        .faq-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .faq-question {
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .faq-question span {
-            transition: transform 0.3s ease;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-in-out;
-            color: var(--secondary-color);
-            padding-top: 0;
-        }
-        
-        .faq-answer p {
-            margin: 0;
-            padding-top: 0.5rem;
-        }
-
-        .faq-item.active .faq-question span {
-            transform: rotate(45deg);
-        }
+        .faq { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color, var(--border-color-light)); }
+        .faq-item { border-bottom: 1px solid var(--border-color, var(--border-color-light)); padding-bottom: 1rem; margin-bottom: 1rem; }
+        .faq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .faq-question { cursor: pointer; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+        .faq-question span { transition: transform 0.3s ease; font-size: 1.5rem; color: var(--primary-color); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; color: var(--secondary-color); padding-top: 0; }
+        .faq-answer p { margin: 0; padding-top: 0.5rem; }
+        .faq-item.active .faq-question span { transform: rotate(45deg); }
 
         .order-button {
-            display: block;
-            width: calc(100% - 2rem);
-            margin: 1.5rem auto 0;
-            padding: 0.8rem;
-            background: linear-gradient(90deg, #007bff, #0056b3);
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: block; width: calc(100% - 2rem); margin: 1.5rem auto 0; padding: 0.8rem;
+            background: linear-gradient(90deg, #007bff, #0056b3); color: white; text-align: center;
+            text-decoration: none; font-weight: 700; font-size: 1rem; border: none; border-radius: 8px;
+            cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+        .order-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); }
 
-        .order-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-        }
-
-        /* Footer */
         footer {
-            text-align: center;
-            padding: 3rem 1rem;
-            margin-top: 3rem;
+            text-align: center; padding: 3rem 1rem; margin-top: 3rem;
             background-color: var(--heading-color, var(--heading-color-light));
             color: var(--background-color, var(--background-color-light));
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .footer-content h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .contact-details {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .contact-item a {
-            color: var(--background-color, var(--background-color-light));
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .contact-item a:hover {
-            opacity: 0.8;
-        }
-
-        .contact-item svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .social-links a {
-            color: var(--background-color, var(--background-color-light));
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .social-links a:hover {
-            transform: scale(1.1);
-        }
-
-        .social-links svg {
-            width: 28px;
-            height: 28px;
-        }
-
+        .footer-content { max-width: 800px; margin: 0 auto; }
+        .footer-content h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+        .contact-details { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; }
+        .contact-item { display: flex; align-items: center; gap: 0.5rem; }
+        .contact-item a { color: var(--background-color, var(--background-color-light)); text-decoration: none; transition: opacity 0.3s ease; }
+        .contact-item a:hover { opacity: 0.8; }
+        .contact-item svg { width: 20px; height: 20px; }
+        .social-links { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+        .social-links a { color: var(--background-color, var(--background-color-light)); transition: transform 0.3s ease; display: inline-block; }
+        .social-links a:hover { transform: scale(1.1); }
+        .social-links svg { width: 28px; height: 28px; }
     </style>
 </head>
 <body>
     <header>
         <button class="theme-toggle-button" id="theme-toggle" title="Toggle light/dark theme">
-            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.591a.75.75 0 011.061 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.591-1.59a.75.75 0 010-1.06zM12 21.75a.75.75 0 01-.75-.75v-2.25a.75.75 0 011.5 0v2.25a.75.75 0 01-.75.75zM5.106 17.834a.75.75 0 010-1.06l1.591-1.59a.75.75 0 111.06 1.06l-1.59 1.591a.75.75 0 01-1.061 0zM4.5 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H5.25a.75.75 0 01-.75-.75zM6.106 5.106a.75.75 0 011.06 0l1.591 1.59a.75.75 0 01-1.06 1.06l-1.591-1.59a.75.75 0 010-1.06z"></path></svg>
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.591a.75.75 0 011.061 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.591-1.59a.75.75 0 010-1.06zM12 21.75a.75.75 0 01-.75-.75v-2.25a.75.75 0 011.5 0v2.25a.75.75 0 01-.75-.75zM5.106 17.834a.75.75 0 010-1.06l1.591-1.59a.75.75 0 111.06 1.06l-1.59 1.591a.75.75 0 01-1.061 0zM4.5 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H5.25a.75.75 0 01-.75-.75zM6.106 5.106a.75.75 0 011.06 0l1.591 1.59a.75.75 0 01-1.06 1.06l-1.591-1.59a.75.75 0 010-1.06z"></path></svg>
             <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 004.472-.948.75.75 0 01.818.162a10.502 10.502 0 01-2.288 4.544c-1.424 1.423-3.322 2.19-5.34 2.19-4.136 0-7.5-3.364-7.5-7.5 0-2.018.767-3.916 2.19-5.34a10.45 10.45 0 014.543-2.289z" clip-rule="evenodd"></path></svg>
         </button>
         <h1>Our VPS Plans</h1>
@@ -415,16 +199,12 @@
                 </div>
                 <div class="contact-item">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" /><path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" /></svg>
-                    <a href="mailto:blabla@bla.com">thubinance@gmail.com</a>
+                    <a href="mailto:thubinance@gmail.com">thubinance@gmail.com</a>
                 </div>
             </div>
             <div class="social-links">
-                <a href="https://facebook.com/*" target="_blank" title="Facebook">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7.02H7.97v-2.89H10.4v-2.16c0-2.42 1.44-3.76 3.65-3.76 1.05 0 2.15.19 2.15.19v2.47h-1.26c-1.18 0-1.55.73-1.55 1.48v1.78h2.78l-.45 2.89h-2.33v7.02c4.78-.75 8.44-4.9 8.44-9.9C22 6.53 17.5 2.04 12 2.04z"/></svg>
-                </a>
-                <a href="https://telegram.me/hayzpar4" target="_blank" title="Telegram">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12a12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472c-.027.291-.123.994-.244 1.546l-1.2 5.658c-.12.564-.33.72-.555.73l-2.18-.018c-.225-.01-.363-.121-.555-.242l-1.08-1.05-2.07-1.278c-.224-.138-.362-.24-.24-.403l.12-.162.12-.162.36-1.05.72-2.162c.074-.24.036-.36-.06-.378c-.096-.018-.204 0-.3 0l-.3.018c-.21.036-.348.145-.432.243c-.084.098-.145.228-.18.3l-.06.18c-.036.072-.073.144-.108.216l-.018.036c-.108.216-.216.433-.324.649l-.018.018c-.11.22-.22.44-.33.66a.63.63 0 0 1-.162.252c-.072.084-.18.145-.3.18l-2.16-.72a.48.48 0 0 1-.324-.45c.012-.156.096-.3.228-.419l.012-.012c1.44-1.32 2.52-2.34 3.24-3.06c.72-.72 1.284-1.296 1.692-1.728a.45.45 0 0 1 .63-.108c.216.072.324.228.324.468c0 .156-.05.312-.144.468l-.432.612c-.12.18-.228.348-.324.504l-.108.18c-.18.324-.36.648-.54.972l-.18.324c-.072.12-.036.252.072.36l.108.09c.108.09.228.07.36-.01l.18-.1c.24-.12.48-.24.72-.36c.24-.12.48-.24.72-.36l.36-.18c.216-.108.432-.216.648-.324l.108-.054c.11-.05.22-.11.33-.16a.45.45 0 0 1 .396-.09"/></svg>
-                </a>
+                <a href="https://facebook.com/*" target="_blank" title="Facebook"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7.02H7.97v-2.89H10.4v-2.16c0-2.42 1.44-3.76 3.65-3.76 1.05 0 2.15.19 2.15.19v2.47h-1.26c-1.18 0-1.55.73-1.55 1.48v1.78h2.78l-.45 2.89h-2.33v7.02c4.78-.75 8.44-4.9 8.44-9.9C22 6.53 17.5 2.04 12 2.04z"/></svg></a>
+                <a href="https://telegram.me/hayzpar4" target="_blank" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12a12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472c-.027.291-.123.994-.244 1.546l-1.2 5.658c-.12.564-.33.72-.555.73l-2.18-.018c-.225-.01-.363-.121-.555-.242l-1.08-1.05-2.07-1.278c-.224-.138-.362-.24-.24-.403l.12-.162.12-.162.36-1.05.72-2.162c.074-.24.036-.36-.06-.378c-.096-.018-.204 0-.3 0l-.3.018c-.21.036-.348.145-.432.243c-.084.098-.145.228-.18.3l-.06.18c-.036.072-.073.144-.108.216l-.018.036c-.108.216-.216.433-.324.649l-.018.018c-.11.22-.22.44-.33.66a.63.63 0 0 1-.162.252c-.072.084-.18.145-.3.18l-2.16-.72a.48.48 0 0 1-.324-.45c.012-.156.096-.3.228-.419l.012-.012c1.44-1.32 2.52-2.34 3.24-3.06c.72-.72 1.284-1.296 1.692-1.728a.45.45 0 0 1 .63-.108c.216.072.324.228.324.468c0 .156-.05.312-.144.468l-.432.612c-.12.18-.228.348-.324.504l-.108.18c-.18.324-.36.648-.54.972l-.18.324c-.072.12-.036.252.072.36l.108.09c.108.09.228.07.36-.01l.18-.1c.24-.12.48-.24.72-.36c.24-.12.48-.24.72-.36l.36-.18c.216-.108.432-.216.648-.324l.108-.054c.11-.05.22-.11.33-.16a.45.45 0 0 1 .396-.09"/></svg></a>
             </div>
             <p>&copy; 2025 VPS Resellers. All rights reserved.</p>
         </div>
@@ -435,16 +215,10 @@
             // --- Theme Toggling Logic ---
             const themeToggle = document.getElementById('theme-toggle');
             const body = document.body;
-
-            // Function to apply the saved theme on page load
             const applyTheme = () => {
                 const savedTheme = localStorage.getItem('theme');
-                if (savedTheme) {
-                    body.setAttribute('data-theme', savedTheme);
-                }
+                if (savedTheme) body.setAttribute('data-theme', savedTheme);
             };
-
-            // Toggle theme on button click
             themeToggle.addEventListener('click', () => {
                 let currentTheme = body.getAttribute('data-theme');
                 if (currentTheme === 'dark') {
@@ -455,111 +229,34 @@
                     localStorage.setItem('theme', 'dark');
                 }
             });
-
-            applyTheme(); // Apply theme when the page loads
+            applyTheme();
 
             // --- Data for VPS Plans ---
             const vpsData = [
-                {
-                    "id": 1, "title": "Basic Plan", "price": "20,000 K",
-                    "description": { "cpu": 1, "ram": "2 GB", "ssd": "50GB", "operating_system": "Windows/LINUX", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA"], 
-                        "notes": [
-                            "Do not use vps with mining in any form, scan ssh, ddos",
-                            "Can change password",
-                            "Can be restarted",
-                            "FULL WARRANTY 30 days",
-                            "Please backup anytime because rdp dies at any time."
-                        ]},
-                    "faq": [
-                        { "question": "Do I get a warranty?", "answer": "The warranty period is 30 days." }, 
-                        { "question": "Can I choose my region?", "answer": "You can choose regions. Local: US, CA, UK, DE, SG, INDIA." }, 
-                        { "question": "Is the data safe?", "answer": "Yes, we do maintain the privacy of customer data. *note: Do not use vps with mining in any form, scan ssh, ddos," },
-                        { "question": "Set up time?", "answer": "Around 3-12 hours" }
-                    ]
-                },
-                {
-                    "id": 2, "title": "Developer Plan", "price": "30,000 K",
-                    "description": { "cpu": 2, "ram": "4GB", "ssd": "80GB", "transfer": "Unlimited", "operating_system": "Windows server 2012 R2", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA", "JP", "AU", "INDONESIA", "SE", "IT", "FR"], 
-                        "notes": [
-                            "Do not use vps with mining in any form, scan ssh, ddos",
-                            "Can change password",
-                            "Can be restarted",
-                            "FULL WARRANTY 30 days",
-                            "Please backup anytime because rdp dies at any time."
-                        ]},
-                    "faq": [
-                        { "question": "Do I get a warranty?", "answer": "The warranty period is 30 days. Do not use more than 90% cpu." }, 
-                        { "question": "Can I choose my region?", "answer": "You can choose from all available regions." }, 
-                        { "question": "Does it support running emulators?", "answer": "No" },
-                        { "question": "Set up time?", "answer": "Around 3-12 hours" }
-                    ]
-                },
-                {
-                    "id": 3, "title": "Business Plan", "price": "45,000 K",
-                    "description": { "cpu": 4, "ram": "8GB", "ssd": "160GB", "operating_system": "Windows/LINUX", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA", "JP", "AU"], 
-                        "notes": [
-                            "Do not use vps with mining in any form, scan ssh, ddos",
-                            "Can change password",
-                            "Can be restarted",
-                            "FULL WARRANTY 30 days",
-                            "Please backup anytime because rdp dies at any time."
-                        ]},
-                    "faq": [
-                        { "question": "Do I get a warranty?", "answer": "The warranty period is 30 days." }, 
-                        { "question": "Can I choose my region?", "answer": "You can choose regions. Local: US, CA, UK, DE, SG, INDIA.JP, AU" }, 
-                        { "question": "Does it support running emulators?", "answer": "No" },
-                        { "question": "Set up time?", "answer": "Around 3-12 hours" }
-                    ]
-                },
-                {
-                    "id": 5, "title": "Ultimate Plan", "price": "70,000 K",
-                    "description": { "cpu": 6, "ram": "16GB", "ssd": "320GB", "operating_system": "Windows/LINUX", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA", "INDONESIA", "JP", "SE", "IT", "FR"], 
-                        "notes": [
-                            "Do not use vps with mining in any form, scan ssh, ddos",
-                            "Can change password",
-                            "Can be restarted",
-                            "FULL WARRANTY 30 days",
-                            "Please backup anytime because rdp dies at any time."
-                        ]},
-                    "faq": [
-                        { "question": "Do I get a warranty?", "answer": "The warranty period is 30 days." }, 
-                        { "question": "Can I choose my region?", "answer": "You can choose regions. Local: US, CA, UK, DE, SG, INDIA, INDONESIA, JP, SE, IT, FR" }, 
-                        { "question": "Does it support running emulators?", "answer": "No" },
-                        { "question": "Set up time?", "answer": "Around 3-12 hours" }
-                    ]
-                }
+                { "id": 1, "title": "Basic Plan", "price": "20,000 K", "description": { "cpu": 1, "ram": "2 GB", "ssd": "50GB", "operating_system": "Windows/LINUX", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA"], "notes": ["Do not use vps with mining in any form, scan ssh, ddos", "Can change password", "Can be restarted", "FULL WARRANTY 30 days", "Please backup anytime because rdp dies at any time."]}, "faq": [{ "question": "Do I get a warranty?", "answer": "The warranty period is 30 days." }, { "question": "Can I choose my region?", "answer": "You can choose regions. Local: US, CA, UK, DE, SG, INDIA." }, { "question": "Is the data safe?", "answer": "Yes, we do maintain the privacy of customer data. *note: Do not use vps with mining in any form, scan ssh, ddos," }, { "question": "Set up time?", "answer": "Around 3-12 hours" }] },
+                { "id": 2, "title": "Developer Plan", "price": "30,000 K", "description": { "cpu": 2, "ram": "4GB", "ssd": "80GB", "transfer": "Unlimited", "operating_system": "Windows server 2012 R2", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA", "JP", "AU", "INDONESIA", "SE", "IT", "FR"], "notes": ["Do not use vps with mining in any form, scan ssh, ddos", "Can change password", "Can be restarted", "FULL WARRANTY 30 days", "Please backup anytime because rdp dies at any time."]}, "faq": [{ "question": "Do I get a warranty?", "answer": "The warranty period is 30 days. Do not use more than 90% cpu." }, { "question": "Can I choose my region?", "answer": "You can choose from all available regions." }, { "question": "Does it support running emulators?", "answer": "No" }, { "question": "Set up time?", "answer": "Around 3-12 hours" }] },
+                { "id": 3, "title": "Business Plan", "price": "45,000 K", "description": { "cpu": 4, "ram": "8GB", "ssd": "160GB", "operating_system": "Windows/LINUX", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA", "JP", "AU"], "notes": ["Do not use vps with mining in any form, scan ssh, ddos", "Can change password", "Can be restarted", "FULL WARRANTY 30 days", "Please backup anytime because rdp dies at any time."]}, "faq": [{ "question": "Do I get a warranty?", "answer": "The warranty period is 30 days." }, { "question": "Can I choose my region?", "answer": "You can choose regions. Local: US, CA, UK, DE, SG, INDIA.JP, AU" }, { "question": "Does it support running emulators?", "answer": "No" }, { "question": "Set up time?", "answer": "Around 3-12 hours" }] },
+                { "id": 5, "title": "Ultimate Plan", "price": "70,000 K", "description": { "cpu": 6, "ram": "16GB", "ssd": "320GB", "operating_system": "Windows/LINUX", "used_time": "30 day", "local": ["US", "CA", "UK", "DE", "SG", "INDIA", "INDONESIA", "JP", "SE", "IT", "FR"], "notes": ["Do not use vps with mining in any form, scan ssh, ddos", "Can change password", "Can be restarted", "FULL WARRANTY 30 days", "Please backup anytime because rdp dies at any time."]}, "faq": [{ "question": "Do I get a warranty?", "answer": "The warranty period is 30 days." }, { "question": "Can I choose my region?", "answer": "You can choose regions. Local: US, CA, UK, DE, SG, INDIA, INDONESIA, JP, SE, IT, FR" }, { "question": "Does it support running emulators?", "answer": "No" }, { "question": "Set up time?", "answer": "Around 3-12 hours" }] }
             ];
 
             const plansContainer = document.getElementById('vps-plans');
-            
-            const locationCoordinates = {
-                'US': { x: '25.5', y: '42' }, 'CA': { x: '26', y: '32' }, 'UK': { x: '49', y: '34' },
-                'DE': { x: '52.5', y: '35' }, 'SG': { x: '79.5', y: '62' }, 'INDIA': { x: '72', y: '52' },
-                'JP': { x: '88', y: '42' }, 'AU': { x: '88', y: '78' }, 'INDONESIA': { x: '82', y: '65' },
-                'SE': { x: '54', y: '28' }, 'IT': { x: '53', y: '40' }, 'FR': { x: '50', y: '38' }
-            };
+            const usdRate = 4600;
+            const locationCoordinates = { 'US': { x: '25.5', y: '42' }, 'CA': { x: '26', y: '32' }, 'UK': { x: '49', y: '34' }, 'DE': { x: '52.5', y: '35' }, 'SG': { x: '79.5', y: '62' }, 'INDIA': { x: '72', y: '52' }, 'JP': { x: '88', y: '42' }, 'AU': { x: '88', y: '78' }, 'INDONESIA': { x: '82', y: '65' }, 'SE': { x: '54', y: '28' }, 'IT': { x: '53', y: '40' }, 'FR': { x: '50', y: '38' } };
 
             vpsData.forEach(plan => {
                 const card = document.createElement('div');
                 card.className = 'vps-card';
+                card.dataset.selectedOs = '';
+                card.dataset.selectedRegion = '';
 
                 const header = document.createElement('div');
                 header.className = 'vps-card-header';
-
                 const mapImage = document.createElement('img');
-                mapImage.src = 'world_map.svg'; 
+                mapImage.src = 'world_map.svg';
                 mapImage.alt = 'World Map';
                 mapImage.className = 'world-map-img';
-                mapImage.onerror = function() {
-                    this.style.display = 'none';
-                    header.style.minHeight = '150px';
-                    header.style.display = 'flex';
-                    header.style.alignItems = 'center';
-                    header.style.justifyContent = 'center';
-                    header.innerText = 'Map not available';
-                };
+                mapImage.onerror = function() { this.style.display = 'none'; const h = this.parentElement; h.style.minHeight = '150px'; h.style.display = 'flex'; h.style.alignItems = 'center'; h.style.justifyContent = 'center'; h.innerText = 'Map not available'; };
                 header.appendChild(mapImage);
-
                 plan.description.local.forEach(loc => {
                     if (locationCoordinates[loc]) {
                         const dot = document.createElement('div');
@@ -570,92 +267,174 @@
                     }
                 });
 
+                const priceInK = parseInt(plan.price.replace(/,/g, ''));
+                const priceInUSD = (priceInK / usdRate).toFixed(2);
+
                 const body = document.createElement('div');
                 body.className = 'vps-card-body';
+                
+                const osOptionsHTML = plan.description.operating_system.split('/')
+                                     .map(os => `<li class="os-option" data-os="${os.trim()}">${os.trim()}</li>`).join('');
+
                 body.innerHTML = `
-                    <h2>
-                        <span>${plan.title}</span>
-                        <span class="price">${plan.price}/mo</span>
-                    </h2>
+                    <h2>${plan.title}</h2>
+                    <div class="price-section">
+                        <div class="price-main">${plan.price} <span>/mo</span></div>
+                        <div class="price-usd">(approx. $${priceInUSD} USD)</div>
+                    </div>
                     <div class="specs">
                         <p><strong>CPU:</strong> ${plan.description.cpu} Core</p>
                         <p><strong>RAM:</strong> ${plan.description.ram}</p>
                         <p><strong>SSD:</strong> ${plan.description.ssd}</p>
-                        ${plan.description.transfer ? `<p><strong>Transfer:</strong> ${plan.description.transfer}</p>` : ''}
-                        <p><strong>OS:</strong> ${plan.description.operating_system}</p>
+                        <p><strong>OS:</strong></p>
+                        <ul class="os-options">${osOptionsHTML}</ul>
                     </div>
                     <div class="locations">
                         <p><strong>Available Locations:</strong></p>
                         <ul class="locations-list">
-                            ${plan.description.local.map(loc => `<li>${loc}</li>`).join('')}
+                            ${plan.description.local.map(loc => `<li data-region="${loc}">${loc}</li>`).join('')}
                         </ul>
                     </div>
                     <div class="notes">
                         <p><strong>Notes:</strong></p>
-                        <ul>
-                            ${plan.description.notes.map(note => `<li>${note}</li>`).join('')}
-                        </ul>
+                        <ul>${plan.description.notes.map(note => `<li>${note}</li>`).join('')}</ul>
                     </div>
                     <div class="faq">
-                        ${plan.faq.map(item => `
-                            <div class="faq-item">
-                                <div class="faq-question">
-                                    ${item.question}
-                                    <span>+</span>
-                                </div>
-                                <div class="faq-answer">
-                                    <p>${item.answer}</p>
-                                </div>
-                            </div>
-                        `).join('')}
+                        ${plan.faq.map(item => `<div class="faq-item"><div class="faq-question">${item.question}<span>+</span></div><div class="faq-answer"><p>${item.answer}</p></div></div>`).join('')}
                     </div>
-                    <a href="https://telegram.me/hayzpar4/" class="order-button">Order Now</a>
-                `;
+                    <a href="#" class="order-button" target="_blank" rel="noopener noreferrer">Order Now</a>`;
 
                 card.appendChild(header);
                 card.appendChild(body);
-                
-                // --- New feature: Scroll to order button on card click ---
-                card.addEventListener('click', (event) => {
-                    // We don't want to trigger this scroll if the user is clicking
-                    // on an already interactive element like the FAQ or the button itself.
-                    if (event.target.closest('.faq-question') || event.target.closest('a')) {
-                        return;
+                plansContainer.appendChild(card);
+
+                const orderButton = card.querySelector('.order-button');
+
+                // const updateOrderLink = () => {
+                //     const selectedOS = card.dataset.selectedOs;
+                //     const selectedRegion = card.dataset.selectedRegion;
+                    
+                //     let details = `I'd like to order the ${plan.title}.`;
+                //     details += `\nSpecs: ${plan.description.cpu} Core CPU, ${plan.description.ram} RAM, ${plan.description.ssd} SSD.`;
+                    
+                //     if (selectedOS) details += `\nOS: ${selectedOS}`;
+                //     if (selectedRegion) details += `\nRegion: ${selectedRegion}`;
+
+                //     details += `\nPrice: ${plan.price} (approx. $${priceInUSD} USD)`;
+
+                //     // orderButton.href = `https://telegram.me/hayzpar4?text=${encodeURIComponent(details)}`;
+                //     orderButton.href = `https://telegram.me/hayzpar4?text=${decodeURIComponent(details)}`;
+
+                // };
+
+                const updateOrderLink = () => {
+                    const selectedOS = card.dataset.selectedOs;
+                    const selectedRegion = card.dataset.selectedRegion;
+
+                    // ✅ Create an array of simple, punctuation-free phrases
+                    const messageParts = [];
+                    
+                    messageParts.push(`I would like to order the ${plan.title}.`);
+                    
+                    if (selectedOS) {
+                        messageParts.push(`My selected OS is ${selectedOS}.`);
+                    }
+                    if (selectedRegion) {
+                        messageParts.push(`My selected region is ${selectedRegion}.`);
                     }
 
-                    const orderButton = card.querySelector('.order-button');
-                    if (orderButton) {
-                        orderButton.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }
+                    // State the price as a simple sentence
+                    messageParts.push(`The price is ${plan.price} or approximately ${priceInUSD} USD.`);
+                    
+                    // Join the sentences with a space to form a paragraph
+                    const details = messageParts.join(' ');
+
+                    orderButton.href = `https://telegram.me/hayzpar4?text=${encodeURIComponent(details)}`;
+                };
+
+                // card.querySelectorAll('.os-option').forEach(option => {
+                //     option.addEventListener('click', (e) => {
+                //         e.stopPropagation();
+                //         card.querySelectorAll('.os-option').forEach(opt => opt.classList.remove('selected'));
+                //         option.classList.add('selected');
+                //         card.dataset.selectedOs = option.dataset.os;
+                //         updateOrderLink();
+                //     });
+                // });
+                card.querySelectorAll('.os-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isAlreadySelected = option.classList.contains('selected');
+                        card.querySelectorAll('.os-option').forEach(opt => opt.classList.remove('selected'));
+
+                        if (isAlreadySelected) {
+                            // If it was already selected, clear the selection
+                            card.dataset.selectedOs = '';
+                        } else {
+                            // Otherwise, select the new one
+                            option.classList.add('selected');
+                            card.dataset.selectedOs = option.dataset.os;
+                        }
+                        updateOrderLink();
+                    });
                 });
 
-                plansContainer.appendChild(card);
+                // card.querySelectorAll('.locations-list li').forEach(loc => {
+                //     loc.addEventListener('click', (e) => {
+                //         e.stopPropagation();
+                //         card.querySelectorAll('.locations-list li').forEach(l => l.classList.remove('selected'));
+                //         loc.classList.add('selected');
+                //         card.dataset.selectedRegion = loc.dataset.region;
+                //         updateOrderLink();
+                //     });
+                // });
+
+                card.querySelectorAll('.locations-list li').forEach(loc => {
+                    loc.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isAlreadySelected = loc.classList.contains('selected');
+                        card.querySelectorAll('.locations-list li').forEach(l => l.classList.remove('selected'));
+
+                        if (isAlreadySelected) {
+                            // If it was already selected, clear the selection
+                            card.dataset.selectedRegion = '';
+                        } else {
+                            // Otherwise, select the new one
+                            loc.classList.add('selected');
+                            card.dataset.selectedRegion = loc.dataset.region;
+                        }
+                        updateOrderLink();
+                    });
+                });
+
+                body.addEventListener('click', (e) => {
+                    if (e.target.closest('.os-option, .locations-list li, .faq, .order-button')) {
+                        return;
+                    }
+                    orderButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+                
+                updateOrderLink(); // Set initial link
             });
 
             // --- FAQ Accordion Logic ---
             document.querySelectorAll('.faq-question').forEach(item => {
-                item.addEventListener('click', () => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const faqItem = item.parentElement;
                     const answer = item.nextElementSibling;
-                    const span = item.querySelector('span');
+                    const isActive = faqItem.classList.contains('active');
+                    
+                    document.querySelectorAll('.faq-item.active').forEach(openItem => {
+                        openItem.classList.remove('active');
+                        openItem.querySelector('.faq-answer').style.maxHeight = null;
+                        openItem.querySelector('.faq-question span').textContent = '+';
+                    });
 
-                    if (faqItem.classList.contains('active')) {
-                        faqItem.classList.remove('active');
-                        answer.style.maxHeight = null;
-                        span.textContent = '+';
-                    } else {
-                        document.querySelectorAll('.faq-item.active').forEach(openItem => {
-                            openItem.classList.remove('active');
-                            openItem.querySelector('.faq-answer').style.maxHeight = null;
-                            openItem.querySelector('.faq-question span').textContent = '+';
-                        });
-                        
+                    if (!isActive) {
                         faqItem.classList.add('active');
                         answer.style.maxHeight = answer.scrollHeight + "px";
-                        span.textContent = '-';
+                        item.querySelector('span').textContent = '-';
                     }
                 });
             });
