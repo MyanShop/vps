@@ -327,14 +327,43 @@
 
                 // };
 
+                // const updateOrderLink = () => {
+                //     const selectedOS = card.dataset.selectedOs;
+                //     const selectedRegion = card.dataset.selectedRegion;
+
+                //     // ✅ Create an array of simple, punctuation-free phrases
+                //     const messageParts = [];
+                    
+                //     messageParts.push(`I would like to order the ${plan.title}.`);
+                    
+                //     if (selectedOS) {
+                //         messageParts.push(`My selected OS is ${selectedOS}.`);
+                //     }
+                //     if (selectedRegion) {
+                //         messageParts.push(`My selected region is ${selectedRegion}.`);
+                //     }
+
+                //     // State the price as a simple sentence
+                //     messageParts.push(`The price is ${plan.price} or approximately ${priceInUSD} USD.`);
+                    
+                //     // Join the sentences with a space to form a paragraph
+                //     const details = messageParts.join(' ');
+
+                //     orderButton.href = `https://telegram.me/hayzpar4?text=${encodeURIComponent(details)}`;
+                // };
+
                 const updateOrderLink = () => {
                     const selectedOS = card.dataset.selectedOs;
                     const selectedRegion = card.dataset.selectedRegion;
 
-                    // ✅ Create an array of simple, punctuation-free phrases
+                    // Create an array of simple, punctuation-free phrases
                     const messageParts = [];
                     
                     messageParts.push(`I would like to order the ${plan.title}.`);
+                    
+                    // ✅ Add the hardware specs to the message
+                    const specDetails = `Specs are ${plan.description.cpu} Core CPU, ${plan.description.ram} RAM, ${plan.description.ssd} SSD.`;
+                    messageParts.push(specDetails);
                     
                     if (selectedOS) {
                         messageParts.push(`My selected OS is ${selectedOS}.`);
